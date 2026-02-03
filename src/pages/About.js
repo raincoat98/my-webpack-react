@@ -2,7 +2,7 @@
 import React, { useContext } from 'react';
 import { Card, List } from 'antd';
 import { Icon } from 'antd';
-import { AboutContext } from '../context/AboutContext';
+import { AboutContext } from '@/context/AboutContext';
 
 function About() {
   const { features, description, features_list } = useContext(AboutContext);
