@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Input, Card, Row, Col, Statistic } from 'antd';
-import { PlusOutline, MinusOutline } from '@ant-design/icons';
+import { Icon } from 'antd';
 import { useStore } from '@/store';
 
 function Home() {
@@ -23,7 +23,7 @@ function Home() {
             <Statistic value={count} style={{ marginBottom: '20px' }} />
             <Button
               type="primary"
-              icon={<PlusOutline />}
+              icon={<Icon type="plus-circle" />}
               onClick={incrementCount}
               style={{ marginRight: '10px' }}
             >
@@ -31,7 +31,7 @@ function Home() {
             </Button>
             <Button
               danger
-              icon={<MinusOutline />}
+              icon={<Icon type="minus-circle" />}
               onClick={decrementCount}
               style={{ marginRight: '10px' }}
             >

@@ -1,25 +1,22 @@
-import React from 'react';
+
+import React, { useContext } from 'react';
 import { Card, List } from 'antd';
-import { CheckCircleOutline } from '@ant-design/icons';
+import { Icon } from 'antd';
+import { AboutContext } from '../context/AboutContext';
 
 function About() {
-  const features = [
-    'React 16',
-    'Webpack 5',
-    'Babel 7',
-    'Ant Design 3.x',
-    'React Router v5',
-    'Zustand',
-  ];
+  const { features, description, features_list } = useContext(AboutContext);
 
   return (
-    <Card title="About This Project">
-      <h2>Tech Stack</h2>
+    <Card title={description.title}>
+      <h3>{description.subtitle}</h3>
+
+      <h2 style={{ marginTop: '20px' }}>Tech Stack</h2>
       <List
         dataSource={features}
         renderItem={(item) => (
           <List.Item>
-            <CheckCircleOutline style={{ color: '#52c41a', marginRight: '10px' }} />
+            <Icon type="check-circle" style={{ color: '#52c41a', marginRight: '10px' }} />
             {item}
           </List.Item>
         )}
@@ -27,11 +24,9 @@ function About() {
 
       <h2 style={{ marginTop: '30px' }}>Features</h2>
       <ul>
-        <li>Webpack bundler with dev server</li>
-        <li>Babel transpiler for modern JavaScript</li>
-        <li>React Router for client-side routing</li>
-        <li>Ant Design 3.x UI components</li>
-        <li>Zustand for state management</li>
+        {features_list.map((feature, index) => (
+          <li key={index}>{feature}</li>
+        ))}
       </ul>
 
       <h2 style={{ marginTop: '30px' }}>Getting Started</h2>
