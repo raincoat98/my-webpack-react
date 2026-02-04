@@ -1,9 +1,10 @@
-import React from 'react';
-import { Button, Input, Card, Row, Col, Statistic } from 'antd';
+import React, { useState } from 'react';
+import { Button, Input, Card, Row, Col, Statistic, Drawer } from 'antd';
 import { Icon } from 'antd';
 import { useStore } from '@/store';
 
 function Home() {
+  const [drawerVisible, setDrawerVisible] = useState(false);
   const count = useStore((state) => state.count);
   const message = useStore((state) => state.message);
   const incrementCount = useStore((state) => state.incrementCount);
@@ -15,6 +16,14 @@ function Home() {
     <div>
       <Card title="Welcome to Home" style={{ marginBottom: '20px' }}>
         <p>This is a React 16 app with Webpack, Babel, React Router, Ant Design 3.x, and Zustand.</p>
+        <Button
+          type="primary"
+          onClick={() => setDrawerVisible(true)}
+          icon={<Icon type="menu" />}
+          style={{ marginTop: '10px' }}
+        >
+          Open Drawer
+        </Button>
       </Card>
 
       <Row gutter={16} style={{ marginBottom: '20px' }}>
@@ -53,6 +62,19 @@ function Home() {
           </Card>
         </Col>
       </Row>
+
+      <Drawer
+        title="Drawer Title"
+        placement="left"
+        onClose={() => setDrawerVisible(false)}
+        visible={drawerVisible}
+      >
+        <p>This is Ant Design Drawer content.</p>
+        <p>You can add any content here!</p>
+        <Button type="primary" onClick={() => setDrawerVisible(false)}>
+          Close Drawer
+        </Button>
+      </Drawer>
     </div>
   );
 }
