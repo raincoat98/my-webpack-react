@@ -4,6 +4,7 @@ import { Layout } from 'antd';
 import Home from '@/pages/Home';
 import About from '@/pages/About';
 import Stepper from '@/pages/Stepper';
+import ProductListDemo from '@/pages/ProductListDemo';
 import { AboutProvider } from './context/AboutContext';
 import './App.css';
 
@@ -20,6 +21,7 @@ function App() {
               <Link to="/" style={{ color: 'white', textDecoration: 'none' }}>Home</Link>
               <Link to="/about" style={{ color: 'white', textDecoration: 'none' }}>About</Link>
               <Link to="/stepper" style={{ color: 'white', textDecoration: 'none' }}>Stepper</Link>
+              <Link to="/products" style={{ color: 'white', textDecoration: 'none' }}>Products</Link>
             </div>
           </Header>
           <Content style={{ padding: '20px' }}>
@@ -27,6 +29,7 @@ function App() {
               <Route exact path="/" component={Home} />
               <Route exact path="/about" component={About} />
               <Route exact path="/stepper" component={Stepper} />
+              <Route exact path="/products" component={ProductListDemo} />
             </Switch>
           </Content>
           <Footer style={{ textAlign: 'center' }}>
