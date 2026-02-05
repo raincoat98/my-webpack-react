@@ -9,6 +9,8 @@
     "dev": "webpack serve --mode development"
   },
   "dependencies": {
+    "ag-grid": "^18.1.2",
+    "ag-grid-react": "^35.0.1",
     "antd": "^3.26.20",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
