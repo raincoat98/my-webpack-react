@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { Button } from 'antd';
 import { AgGridReact } from 'ag-grid-react';
 import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community';
 import { fetchProducts } from '@/api/productApi';
@@ -7,9 +8,7 @@ import 'ag-grid-community/styles/ag-theme-balham.css';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-function ProductList({ onSelectProduct }) {
-  const [gridApi, setGridApi] = useState(null);
-  const [selectedRows, setSelectedRows] = useState([]);
+function ProductList({ onOpenDrawer }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -21,13 +20,31 @@ function ProductList({ onSelectProduct }) {
     });
   }, []);
 
-  const columnDefs = [
+  const handleOpenDrawer = useCallback((product) => {
+    console.log('Drawer opened for:', product);
+    onOpenDrawer && onOpenDrawer(product);
+  }, [onOpenDrawer]);
+
+  const columnDefs = useMemo(() => [
     {
       field: 'id',
-      headerName: 'ID',
-      width: 60,
-      sortable: true,
-      filter: true,
+      headerName: '상세',
+      width: 80,
+      sortable: false,
+      filter: false,
+      suppressRowClickSelection: true,
+      cellRenderer: (params) => (
+        <Button
+          type="link"
+          size="small"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleOpenDrawer(params.data);
+          }}
+        >
+          상세보기
+        </Button>
+      ),
     },
     {
       field: 'name',
@@ -70,23 +87,19 @@ function ProductList({ onSelectProduct }) {
       sortable: true,
       filter: true,
     },
-  ];
+  ], [handleOpenDrawer]);
 
   const defaultColDef = {
     resizable: true,
     editable: false,
   };
 
-  const onGridReady = (params) => {
-    setGridApi(params.api);
+  const onGridReady = () => {
+    // Grid ready handler
   };
 
   const onRowSelected = () => {
-    const selected = gridApi.getSelectedRows();
-    setSelectedRows(selected);
-    if (selected.length > 0) {
-      onSelectProduct && onSelectProduct(selected[0]);
-    }
+    // Row selection handler
   };
 
   return (
@@ -104,13 +117,6 @@ function ProductList({ onSelectProduct }) {
           loading={loading}
         />
       </div>
-      {selectedRows.length > 0 && (
-        <div style={{ marginTop: '20px', padding: '15px', background: '#f0f2f5', borderRadius: '4px' }}>
-          <p><strong>선택된 상품:</strong> {selectedRows[0].name}</p>
-          <p><strong>가격:</strong> ₩{selectedRows[0].price.toLocaleString()}</p>
-          <p><strong>재고:</strong> {selectedRows[0].stock}개</p>
-        </div>
-      )}
     </div>
   );
 }
