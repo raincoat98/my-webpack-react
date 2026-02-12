@@ -8,7 +8,7 @@ import 'ag-grid-community/styles/ag-theme-balham.css';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-function ProductList({ onOpenDrawer }) {
+function ProductList({ onOpenDrawer, onProductsLoaded, currentPage = 1 }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -16,14 +16,15 @@ function ProductList({ onOpenDrawer }) {
     // API에서 상품 데이터 조회
     fetchProducts().then((data) => {
       setProducts(data);
+      onProductsLoaded && onProductsLoaded(data);
       setLoading(false);
     });
-  }, []);
+  }, [onProductsLoaded]);
 
   const handleOpenDrawer = useCallback((product) => {
     console.log('Drawer opened for:', product);
-    onOpenDrawer && onOpenDrawer(product);
-  }, [onOpenDrawer]);
+    onOpenDrawer && onOpenDrawer(product, currentPage);
+  }, [onOpenDrawer, currentPage]);
 
   const columnDefs = useMemo(() => [
     {

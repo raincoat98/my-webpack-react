@@ -1,15 +1,55 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, Drawer, Divider, Tag } from 'antd';
+import { withRouter } from 'react-router-dom';
 import ProductList from '@/components/ProductList';
 
-function ProductListDemo() {
+function ProductListDemo({ location, history }) {
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [drawerProduct, setDrawerProduct] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [allProducts, setAllProducts] = useState([]);
 
-  const handleOpenDrawer = (product) => {
+  // URL 쿼리 파라미터에서 상태 초기화
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const productId = parseInt(params.get('id'));
+    const page = parseInt(params.get('page')) || 1;
+    const detail = params.get('detail') === 'true';
+
+    setCurrentPage(page);
+
+    if (detail && productId && allProducts.length > 0) {
+      const product = allProducts.find(p => p.id === productId);
+      if (product) {
+        setDrawerProduct(product);
+        setDrawerVisible(true);
+      }
+    }
+  }, [location.search, allProducts]);
+
+  const handleOpenDrawer = (product, page = currentPage) => {
     console.log('ProductListDemo drawer opened:', product);
     setDrawerProduct(product);
     setDrawerVisible(true);
+
+    // URL 업데이트
+    const params = new URLSearchParams();
+    params.set('id', product.id);
+    params.set('page', page);
+    params.set('detail', 'true');
+    history.push(`${location.pathname}?${params.toString()}`);
+  };
+
+  const handleCloseDrawer = () => {
+    setDrawerVisible(false);
+    setDrawerProduct(null);
+
+    // URL에서 쿼리 파라미터 제거
+    history.push(location.pathname);
+  };
+
+  const handleProductsLoaded = (products) => {
+    setAllProducts(products);
   };
 
   return (
@@ -19,14 +59,18 @@ function ProductListDemo() {
       </Card>
 
       <Card>
-        <ProductList onOpenDrawer={handleOpenDrawer} />
+        <ProductList
+          onOpenDrawer={handleOpenDrawer}
+          onProductsLoaded={handleProductsLoaded}
+          currentPage={currentPage}
+        />
       </Card>
 
       {drawerProduct && (
         <Drawer
           title={`상품 상세 정보 - ${drawerProduct.name}`}
           placement="right"
-          onClose={() => setDrawerVisible(false)}
+          onClose={handleCloseDrawer}
           visible={drawerVisible}
           width={400}
         >
@@ -49,4 +93,4 @@ function ProductListDemo() {
   );
 }
 
-export default ProductListDemo;
+export default withRouter(ProductListDemo);
