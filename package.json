@@ -12,6 +12,7 @@
     "ag-grid": "^18.1.2",
     "ag-grid-react": "^35.0.1",
     "antd": "^3.26.20",
+    "axios": "^1.13.5",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
     "react-router-dom": "^4.3.1",
