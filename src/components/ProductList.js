@@ -8,9 +8,10 @@ import 'ag-grid-community/styles/ag-theme-balham.css';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-function ProductList({ onOpenDrawer, onProductsLoaded, currentPage = 1 }) {
+function ProductList({ onOpenDrawer, onProductsLoaded, currentPage = 1, selectedProductId = null }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [gridApi, setGridApi] = useState(null);
 
   useEffect(() => {
     // API에서 상품 데이터 조회
@@ -20,6 +21,17 @@ function ProductList({ onOpenDrawer, onProductsLoaded, currentPage = 1 }) {
       setLoading(false);
     });
   }, [onProductsLoaded]);
+
+  // selectedProductId가 변경되면 해당 행 선택
+  useEffect(() => {
+    if (gridApi && selectedProductId) {
+      const rowNode = gridApi.getRowNode(String(selectedProductId));
+      if (rowNode) {
+        rowNode.setSelected(true);
+        gridApi.ensureNodeVisible(rowNode, 'middle');
+      }
+    }
+  }, [gridApi, selectedProductId]);
 
   const handleOpenDrawer = useCallback((product) => {
     console.log('Drawer opened for:', product);
@@ -95,8 +107,17 @@ function ProductList({ onOpenDrawer, onProductsLoaded, currentPage = 1 }) {
     editable: false,
   };
 
-  const onGridReady = () => {
-    // Grid ready handler
+  const onGridReady = (params) => {
+    setGridApi(params.api);
+
+    // selectedProductId가 있으면 해당 행 선택
+    if (selectedProductId) {
+      const rowNode = params.api.getRowNode(String(selectedProductId));
+      if (rowNode) {
+        rowNode.setSelected(true);
+        params.api.ensureNodeVisible(rowNode, 'middle');
+      }
+    }
   };
 
   const onRowSelected = () => {
@@ -116,6 +137,7 @@ function ProductList({ onOpenDrawer, onProductsLoaded, currentPage = 1 }) {
           pagination={true}
           paginationPageSize={5}
           loading={loading}
+          getRowId={(params) => String(params.data.id)}
         />
       </div>
     </div>

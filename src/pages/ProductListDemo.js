@@ -63,6 +63,7 @@ function ProductListDemo({ location, history }) {
           onOpenDrawer={handleOpenDrawer}
           onProductsLoaded={handleProductsLoaded}
           currentPage={currentPage}
+          selectedProductId={drawerProduct?.id || null}
         />
       </Card>
 
