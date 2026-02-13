@@ -19,11 +19,13 @@ function ProductsApp({ location, history }) {
 
     setCurrentPage(page);
 
-    if (detail && productId && allProducts.length > 0) {
-      const product = allProducts.find(p => p.id === productId);
-      if (product) {
-        setDrawerProduct(product);
-        setDrawerVisible(true);
+    if (detail && productId) {
+      setDrawerVisible(true);
+      if (allProducts.length > 0) {
+        const product = allProducts.find(p => p.id === productId);
+        if (product) {
+          setDrawerProduct(product);
+        }
       }
     }
   }, [location.search, allProducts]);
@@ -68,13 +70,11 @@ function ProductsApp({ location, history }) {
         />
       </Card>
 
-      {drawerProduct && (
-        <ProductDetailDrawer
-          product={drawerProduct}
-          visible={drawerVisible}
-          onClose={handleCloseDrawer}
-        />
-      )}
+      <ProductDetailDrawer
+        product={drawerProduct}
+        visible={drawerVisible}
+        onClose={handleCloseDrawer}
+      />
     </div>
   );
 }
