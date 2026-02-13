@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Drawer, Divider, Tag } from 'antd';
+import { Card } from 'antd';
 import { withRouter } from 'react-router-dom';
 import ProductList from '@/components/ProductList';
+import ProductDetailDrawer from './ProductDetailDrawer';
 
-function ProductListDemo({ location, history }) {
+function ProductsApp({ location, history }) {
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [drawerProduct, setDrawerProduct] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -28,7 +29,7 @@ function ProductListDemo({ location, history }) {
   }, [location.search, allProducts]);
 
   const handleOpenDrawer = (product, page = currentPage) => {
-    console.log('ProductListDemo drawer opened:', product);
+    console.log('ProductsApp drawer opened:', product);
     setDrawerProduct(product);
     setDrawerVisible(true);
 
@@ -68,30 +69,14 @@ function ProductListDemo({ location, history }) {
       </Card>
 
       {drawerProduct && (
-        <Drawer
-          title={`상품 상세 정보 - ${drawerProduct.name}`}
-          placement="right"
-          onClose={handleCloseDrawer}
+        <ProductDetailDrawer
+          product={drawerProduct}
           visible={drawerVisible}
-          width={400}
-        >
-          <div>
-            <p><strong>상품 ID:</strong> {drawerProduct.id}</p>
-            <Divider />
-            <p><strong>상품명:</strong> {drawerProduct.name}</p>
-            <Divider />
-            <p><strong>설명:</strong> {drawerProduct.description}</p>
-            <Divider />
-            <p><strong>가격:</strong> <Tag color="blue">₩{drawerProduct.price.toLocaleString()}</Tag></p>
-            <Divider />
-            <p><strong>재고:</strong> <Tag color={drawerProduct.stock < 20 ? 'red' : 'green'}>{drawerProduct.stock}개</Tag></p>
-            <Divider />
-            <p><strong>카테고리:</strong> <Tag>{drawerProduct.category}</Tag></p>
-          </div>
-        </Drawer>
+          onClose={handleCloseDrawer}
+        />
       )}
     </div>
   );
 }
 
-export default withRouter(ProductListDemo);
+export default withRouter(ProductsApp);

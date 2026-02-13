@@ -4,7 +4,7 @@ import { Layout } from 'antd';
 import Home from '@/pages/Home';
 import About from '@/pages/About';
 import Stepper from '@/pages/Stepper';
-import ProductListDemo from '@/pages/ProductListDemo';
+import ProductsApp from '@/pages/ProductsApp';
 import ProductListServerDemo from '@/pages/ProductListServerDemo';
 import { AboutProvider } from './context/AboutContext';
 import './App.css';
@@ -31,7 +31,7 @@ function App() {
               <Route exact path="/" component={Home} />
               <Route exact path="/about" component={About} />
               <Route exact path="/stepper" component={Stepper} />
-              <Route exact path="/products" component={ProductListDemo} />
+              <Route exact path="/products" component={ProductsApp} />
               <Route exact path="/products-server" component={ProductListServerDemo} />
             </Switch>
           </Content>
