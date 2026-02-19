@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card } from 'antd';
 import { withRouter } from 'react-router-dom';
 import ProductList from '@/components/ProductList';
@@ -19,16 +19,14 @@ function ProductsApp({ location, history }) {
 
     setCurrentPage(page);
 
-    if (detail && productId) {
+    if (detail && productId && allProducts.length > 0) {
       setDrawerVisible(true);
-      if (allProducts.length > 0) {
-        const product = allProducts.find(p => p.id === productId);
-        if (product) {
-          setDrawerProduct(product);
-        }
+      const product = allProducts.find(p => p.id === productId);
+      if (product) {
+        setDrawerProduct(product);
       }
     }
-  }, [location.search, allProducts]);
+  }, [location.search]);
 
   const handleOpenDrawer = (product, page = currentPage) => {
     console.log('ProductsApp drawer opened:', product);
@@ -51,9 +49,9 @@ function ProductsApp({ location, history }) {
     history.push(location.pathname);
   };
 
-  const handleProductsLoaded = (products) => {
+  const handleProductsLoaded = useCallback((products) => {
     setAllProducts(products);
-  };
+  }, []);
 
   return (
     <div>

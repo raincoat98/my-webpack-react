@@ -14,13 +14,13 @@ function ProductList({ onOpenDrawer, onProductsLoaded, currentPage = 1, selected
   const [gridApi, setGridApi] = useState(null);
 
   useEffect(() => {
-    // API에서 상품 데이터 조회
+    // API에서 상품 데이터 조회 (마운트 시 1회만)
     fetchProducts().then((data) => {
       setProducts(data);
       onProductsLoaded && onProductsLoaded(data);
       setLoading(false);
     });
-  }, [onProductsLoaded]);
+  }, []);
 
   // selectedProductId가 변경되면 해당 행 선택
   useEffect(() => {
