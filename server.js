@@ -25,8 +25,10 @@ let products = [
 
 /**
  * GET /api/products
- * 상품 목록 조회
+ * 상품 목록 조회 (서버 사이드 페이지네이션)
  * Query parameters:
+ *   - startRow: 시작 행 인덱스 (0부터)
+ *   - endRow: 종료 행 인덱스 (exclusive)
  *   - category: 카테고리 필터
  *   - sortBy: 정렬 필드 (name, price, stock)
  *   - order: 정렬 순서 (asc, desc)
@@ -52,9 +54,19 @@ app.get('/api/products', (req, res) => {
     });
   }
 
+  // 전체 개수 저장 (페이지네이션 전)
+  const rowCount = result.length;
+
+  // 페이지네이션
+  const startRow = parseInt(req.query.startRow, 10) || 0;
+  const endRow = parseInt(req.query.endRow, 10) || result.length;
+
+  const paginatedResult = result.slice(startRow, endRow);
+
   res.json({
     success: true,
-    data: result,
+    data: paginatedResult,
+    rowCount: rowCount,
   });
 });
 

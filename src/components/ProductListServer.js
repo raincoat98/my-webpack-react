@@ -2,17 +2,16 @@
  * 서버 사이드 상품 목록 컴포넌트
  *
  * 특징:
- * - 서버에서 데이터를 직접 가져와 초기 렌더링
- * - 클라이언트 사이드 하이드레이션 지원
- * - SEO 최적화 (SSR)
- * - 초기 로딩 시간 단축
+ * - 페이지별로 서버에서 데이터를 받아 렌더링
+ * - URL 쿼리 파라미터로 페이지 상태 관리
+ * - 페이지 변경 시 서버 요청 발생
  *
  * 사용법:
  * import ProductListServer from '@/components/ProductListServer';
  * <ProductListServer onOpenDrawer={handleOpenDrawer} />
  */
 
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { Button, Spin } from 'antd';
 import { AgGridReact } from 'ag-grid-react';
 import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community';
@@ -22,36 +21,16 @@ import 'ag-grid-community/styles/ag-theme-balham.css';
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 /**
- * 서버에서 초기 데이터를 받아 렌더링하는 컴포넌트
+ * 서버에서 데이터를 페이지 단위로 받아 표시하는 상품 목록 컴포넌트
  * @param {Object} props - 컴포넌트 props
- * @param {Array} props.initialData - 서버에서 가져온 초기 데이터
  * @param {Function} props.onOpenDrawer - drawer 열기 핸들러
- * @param {boolean} props.isLoading - 로딩 상태
- * @param {string} props.error - 에러 메시지
  */
-function ProductListServer({ initialData = [], onOpenDrawer, isLoading = false, error = null }) {
-  const [products, setProducts] = useState(initialData);
-  const [loading, setLoading] = useState(isLoading);
-
-  // initialData가 변경될 때 products 업데이트
-  useEffect(() => {
-    console.log('ProductListServer: initialData changed', initialData);
-    setProducts(initialData);
-  }, [initialData]);
-
-  // loading 상태 업데이트
-  useEffect(() => {
-    setLoading(isLoading);
-  }, [isLoading]);
-
-  // 에러 상태 처리
-  if (error) {
-    return (
-      <div style={{ padding: '20px', color: '#ff4d4f' }}>
-        <p><strong>오류가 발생했습니다:</strong> {error}</p>
-      </div>
-    );
-  }
+function ProductListServer({ onOpenDrawer }) {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [totalRows, setTotalRows] = useState(0);
+  const pageSize = 5;
+  const currentPageRef = useRef(0);
 
   const handleOpenDrawer = useCallback((product) => {
     console.log('ServerComponent Drawer opened for:', product);
@@ -127,13 +106,56 @@ function ProductListServer({ initialData = [], onOpenDrawer, isLoading = false, 
     editable: false,
   };
 
-  const onGridReady = () => {
+  // 페이지 변경 시 서버에서 데이터 로드
+  const loadPage = useCallback((pageNumber) => {
+    // 같은 페이지 요청이면 무시
+    if (currentPageRef.current === pageNumber) {
+      return;
+    }
+
+    currentPageRef.current = pageNumber;
+    const startRow = (pageNumber - 1) * pageSize;
+    const endRow = startRow + pageSize;
+
+    setLoading(true);
+
+    fetch(`http://localhost:3001/api/products?startRow=${startRow}&endRow=${endRow}`)
+      .then(res => res.json())
+      .then(result => {
+        if (result.success) {
+          setProducts(result.data);
+          setTotalRows(result.rowCount);
+        }
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error('데이터 로드 실패:', err);
+        setLoading(false);
+      });
+  }, [pageSize]);
+
+  // 초기 데이터 로드 (마운트 시 1회만)
+  useEffect(() => {
+    loadPage(1);
+  }, []);
+
+  const onGridReady = useCallback((params) => {
     // Grid ready handler
-  };
+  }, []);
 
   const onRowSelected = () => {
     // Row selection handler
   };
+
+  // 페이지 변경 핸들러 - 실제 페이지 변경 시에만 호출
+  const onPaginationChanged = useCallback((params) => {
+    const newPage = params.api.paginationGetCurrentPage() + 1;
+
+    // 페이지가 실제로 변경되었을 때만 서버에서 데이터 로드
+    if (currentPageRef.current !== newPage) {
+      loadPage(newPage);
+    }
+  }, [loadPage]);
 
   return (
     <Spin spinning={loading}>
@@ -145,10 +167,11 @@ function ProductListServer({ initialData = [], onOpenDrawer, isLoading = false, 
             defaultColDef={defaultColDef}
             onGridReady={onGridReady}
             onSelectionChanged={onRowSelected}
+            onPaginationChanged={onPaginationChanged}
             rowSelection="single"
             pagination={true}
-            paginationPageSize={5}
-            loading={loading}
+            paginationPageSize={pageSize}
+            domLayout="normal"
           />
         </div>
       </div>

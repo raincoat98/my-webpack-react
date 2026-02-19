@@ -9,39 +9,16 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Card, Spin, Alert } from 'antd';
+import { Card } from 'antd';
 import { withRouter } from 'react-router-dom';
 import ProductListServer from '@/components/ProductListServer';
 import ServerProductDetailDrawer from '@/components/ServerProductDetailDrawer';
-import { fetchProducts } from '@/api/productApi';
 
 function ProductServerApp({ location, history }) {
-  const [initialData, setInitialData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [drawerProduct, setDrawerProduct] = useState(null);
 
-  // 서버에서 초기 데이터 로드
-  useEffect(() => {
-    const loadInitialData = async () => {
-      try {
-        setLoading(true);
-        const data = await fetchProducts();
-        setInitialData(data);
-        setError(null);
-      } catch (err) {
-        console.error('초기 데이터 로드 실패:', err);
-        setError(err.message || '데이터를 불러올 수 없습니다.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadInitialData();
-  }, []);
-
-  // URL 쿼리 파라미터에서 상태 초기화
+  // URL 쿼리 파라미터에서 drawer 상태 초기화
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const productId = parseInt(params.get('id'));
@@ -49,14 +26,18 @@ function ProductServerApp({ location, history }) {
 
     if (detail && productId) {
       setDrawerVisible(true);
-      if (initialData.length > 0) {
-        const product = initialData.find(p => p.id === productId);
-        if (product) {
-          setDrawerProduct(product);
-        }
-      }
+      // 서버 사이드 페이지네이션이므로 전체 데이터 없음
+      // API를 통해 상품 정보 로드
+      fetch(`http://localhost:3001/api/products/${productId}`)
+        .then(res => res.json())
+        .then(result => {
+          if (result.success) {
+            setDrawerProduct(result.data);
+          }
+        })
+        .catch(err => console.error('상품 정보 로드 실패:', err));
     }
-  }, [location.search, initialData]);
+  }, [location.search]);
 
   const handleOpenDrawer = (product) => {
     console.log('ProductServerApp drawer opened:', product);
@@ -81,40 +62,23 @@ function ProductServerApp({ location, history }) {
   return (
     <div>
       <Card
-        title="상품 목록 (서버 사이드 렌더링)"
+        title="상품 목록 (서버 사이드 페이지네이션)"
         style={{ marginBottom: '20px' }}
       >
         <p>
-          서버에서 초기 데이터를 가져와 렌더링합니다.
-          SSR(Server-Side Rendering)을 통해 초기 로딩 시간을 단축하고 SEO를 최적화합니다.
+          ag-grid의 Server-Side Row Model을 사용합니다.
+          페이지를 변경할 때마다 서버에서 데이터를 요청하므로 초기 데이터 로딩이 빠릅니다.
         </p>
         <p style={{ fontSize: '12px', color: '#999' }}>
-          💡 Tip: 이 방식은 페이지 로드 시 서버에서 데이터를 미리 가져와서 초기 렌더링합니다.
-          CSR(Client-Side Rendering) 방식에 비해 초기 로딩이 빠릅니다.
+          💡 Tip: 페이지 변경 시 Network 탭에서 /api/products 요청을 확인할 수 있습니다.
+          startRow와 endRow 파라미터로 서버가 정확한 페이지 데이터를 반환합니다.
         </p>
       </Card>
 
-      {error && (
-        <Alert
-          message="데이터 로드 실패"
-          description={error}
-          type="error"
-          showIcon
-          closable
-          style={{ marginBottom: '20px' }}
-          onClose={() => setError(null)}
-        />
-      )}
-
       <Card>
-        <Spin spinning={loading} tip="데이터를 불러오는 중...">
-          <ProductListServer
-            initialData={initialData}
-            onOpenDrawer={handleOpenDrawer}
-            isLoading={loading}
-            error={error}
-          />
-        </Spin>
+        <ProductListServer
+          onOpenDrawer={handleOpenDrawer}
+        />
       </Card>
 
       {/* 상품 상세 정보 Drawer */}
