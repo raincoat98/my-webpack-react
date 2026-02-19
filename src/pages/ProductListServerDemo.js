@@ -9,10 +9,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { Card, Drawer, Divider, Tag, Spin, Alert } from 'antd';
+import { withRouter } from 'react-router-dom';
 import ProductListServer from '@/components/ProductListServer';
 import { fetchProducts } from '@/api/productApi';
 
-function ProductListServerDemo() {
+function ProductListServerDemo({ location, history }) {
   const [initialData, setInitialData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -38,18 +39,42 @@ function ProductListServerDemo() {
     loadInitialData();
   }, []);
 
+  // URL 쿼리 파라미터에서 상태 초기화
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const productId = parseInt(params.get('id'));
+    const detail = params.get('detail') === 'true';
+
+    if (detail && productId) {
+      setDrawerVisible(true);
+      if (initialData.length > 0) {
+        const product = initialData.find(p => p.id === productId);
+        if (product) {
+          setDrawerProduct(product);
+        }
+      }
+    }
+  }, [location.search, initialData]);
+
   const handleOpenDrawer = (product) => {
     console.log('ProductListServerDemo drawer opened:', product);
-    console.log('Setting drawerProduct:', product);
-    console.log('Setting drawerVisible to true');
     setDrawerProduct(product);
     setDrawerVisible(true);
+
+    // URL 업데이트
+    const params = new URLSearchParams();
+    params.set('id', product.id);
+    params.set('detail', 'true');
+    history.push(`${location.pathname}?${params.toString()}`);
   };
 
   const handleCloseDrawer = () => {
     console.log('Closing drawer');
     setDrawerVisible(false);
     setTimeout(() => setDrawerProduct(null), 300); // 드로어 닫기 애니메이션 후 상태 초기화
+
+    // URL에서 쿼리 파라미터 제거
+    history.push(location.pathname);
   };
 
   return (
@@ -149,4 +174,4 @@ function ProductListServerDemo() {
   );
 }
 
-export default ProductListServerDemo;
+export default withRouter(ProductListServerDemo);
