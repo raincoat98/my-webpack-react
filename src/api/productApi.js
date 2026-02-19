@@ -1,5 +1,9 @@
 // API 기본 설정
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+console.log('=== API Configuration ===');
+console.log('API_BASE_URL:', API_BASE_URL);
+console.log('REACT_APP_USE_MOCK_API:', process.env.REACT_APP_USE_MOCK_API);
+console.log('USE_MOCK_API:', process.env.REACT_APP_USE_MOCK_API !== 'false');
 
 // 샘플 상품 데이터 (모의 데이터용)
 const sampleProducts = [
@@ -11,7 +15,8 @@ const sampleProducts = [
 ];
 
 // 환경변수로 Mock API 사용 여부 결정 (기본값: true)
-const USE_MOCK_API = process.env.REACT_APP_USE_MOCK_API !== 'false';
+// 명시적으로 'true' 문자열일 때만 Mock API 사용
+const USE_MOCK_API = process.env.REACT_APP_USE_MOCK_API === 'true';
 
 /**
  * 상품 목록 조회 API
@@ -22,8 +27,11 @@ const USE_MOCK_API = process.env.REACT_APP_USE_MOCK_API !== 'false';
  * @returns {Promise<Array>} 상품 데이터 배열
  */
 export const fetchProducts = (options = {}) => {
+  console.log('fetchProducts called, USE_MOCK_API:', USE_MOCK_API);
+
   if (USE_MOCK_API) {
     // Mock API 사용
+    console.log('Using Mock API');
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve(sampleProducts);
@@ -37,18 +45,27 @@ export const fetchProducts = (options = {}) => {
   if (options.sortBy) queryParams.append('sortBy', options.sortBy);
   if (options.order) queryParams.append('order', options.order);
 
-  return fetch(`${API_BASE_URL}/products?${queryParams.toString()}`)
+  const url = `${API_BASE_URL}/products?${queryParams.toString()}`;
+  console.log('Fetching from:', url);
+
+  return fetch(url)
     .then((response) => {
+      console.log('Fetch response status:', response.status);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       return response.json();
     })
     .then((result) => {
+      console.log('Fetch result:', result);
       if (result.success) {
         return result.data;
       }
       throw new Error(result.message || '데이터 조회 실패');
+    })
+    .catch((error) => {
+      console.error('Fetch error:', error);
+      throw error;
     });
 };
 

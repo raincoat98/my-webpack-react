@@ -12,7 +12,7 @@
  * <ProductListServer onOpenDrawer={handleOpenDrawer} />
  */
 
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { Button, Spin } from 'antd';
 import { AgGridReact } from 'ag-grid-react';
 import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community';
@@ -32,6 +32,17 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 function ProductListServer({ initialData = [], onOpenDrawer, isLoading = false, error = null }) {
   const [products, setProducts] = useState(initialData);
   const [loading, setLoading] = useState(isLoading);
+
+  // initialData가 변경될 때 products 업데이트
+  useEffect(() => {
+    console.log('ProductListServer: initialData changed', initialData);
+    setProducts(initialData);
+  }, [initialData]);
+
+  // loading 상태 업데이트
+  useEffect(() => {
+    setLoading(isLoading);
+  }, [isLoading]);
 
   // 에러 상태 처리
   if (error) {

@@ -6,13 +6,17 @@
   "scripts": {
     "start": "webpack serve --mode development --open",
     "build": "webpack --mode production",
-    "dev": "webpack serve --mode development"
+    "dev": "webpack serve --mode development",
+    "server": "node server.js",
+    "server:dev": "nodemon server.js"
   },
   "dependencies": {
     "ag-grid": "^18.1.2",
     "ag-grid-react": "^35.0.1",
     "antd": "^3.26.20",
     "axios": "^1.13.5",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
     "react-router-dom": "^4.3.1",
@@ -28,6 +32,7 @@
     "html-webpack-plugin": "^5.5.0",
     "less": "^4.2.0",
     "less-loader": "^11.1.0",
+    "nodemon": "^3.1.11",
     "style-loader": "^3.3.0",
     "webpack": "^5.89.0",
     "webpack-cli": "^5.1.0",

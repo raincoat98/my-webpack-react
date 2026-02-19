@@ -40,11 +40,14 @@ function ProductListServerDemo() {
 
   const handleOpenDrawer = (product) => {
     console.log('ProductListServerDemo drawer opened:', product);
+    console.log('Setting drawerProduct:', product);
+    console.log('Setting drawerVisible to true');
     setDrawerProduct(product);
     setDrawerVisible(true);
   };
 
   const handleCloseDrawer = () => {
+    console.log('Closing drawer');
     setDrawerVisible(false);
     setTimeout(() => setDrawerProduct(null), 300); // 드로어 닫기 애니메이션 후 상태 초기화
   };
@@ -94,7 +97,7 @@ function ProductListServerDemo() {
           title={`상품 상세 정보 - ${drawerProduct.name}`}
           placement="right"
           onClose={handleCloseDrawer}
-          open={drawerVisible}
+          visible={drawerVisible}
           width={400}
         >
           <div>
