@@ -5,7 +5,7 @@ import Home from '@/pages/Home';
 import About from '@/pages/About';
 import Stepper from '@/pages/Stepper';
 import ProductsApp from '@/pages/ProductsApp';
-import ProductListServerDemo from '@/pages/ProductListServerDemo';
+import ProductServerApp from '@/pages/ProductServerApp';
 import { AboutProvider } from './context/AboutContext';
 import './App.css';
 
@@ -32,7 +32,7 @@ function App() {
               <Route exact path="/about" component={About} />
               <Route exact path="/stepper" component={Stepper} />
               <Route exact path="/products" component={ProductsApp} />
-              <Route exact path="/products-server" component={ProductListServerDemo} />
+              <Route exact path="/products-server" component={ProductServerApp} />
             </Switch>
           </Content>
           <Footer style={{ textAlign: 'center' }}>

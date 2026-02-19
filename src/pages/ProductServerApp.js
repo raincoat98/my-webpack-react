@@ -1,19 +1,21 @@
 /**
- * 서버 사이드 렌더링 상품 목록 데모 페이지
+ * 서버 사이드 렌더링 상품 목록 페이지
  *
  * 특징:
  * - 서버에서 초기 데이터를 받아 렌더링
  * - 클라이언트에서 하이드레이션하여 인터랙티브 기능 추가
  * - 초기 로딩 시간 단축 및 SEO 최적화
+ * - URL 쿼리 파라미터로 상태 관리
  */
 
 import React, { useState, useEffect } from 'react';
-import { Card, Drawer, Divider, Tag, Spin, Alert } from 'antd';
+import { Card, Spin, Alert } from 'antd';
 import { withRouter } from 'react-router-dom';
 import ProductListServer from '@/components/ProductListServer';
+import ServerProductDetailDrawer from '@/components/ServerProductDetailDrawer';
 import { fetchProducts } from '@/api/productApi';
 
-function ProductListServerDemo({ location, history }) {
+function ProductServerApp({ location, history }) {
   const [initialData, setInitialData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -57,7 +59,7 @@ function ProductListServerDemo({ location, history }) {
   }, [location.search, initialData]);
 
   const handleOpenDrawer = (product) => {
-    console.log('ProductListServerDemo drawer opened:', product);
+    console.log('ProductServerApp drawer opened:', product);
     setDrawerProduct(product);
     setDrawerVisible(true);
 
@@ -69,7 +71,6 @@ function ProductListServerDemo({ location, history }) {
   };
 
   const handleCloseDrawer = () => {
-    console.log('Closing drawer');
     setDrawerVisible(false);
     setTimeout(() => setDrawerProduct(null), 300); // 드로어 닫기 애니메이션 후 상태 초기화
 
@@ -117,61 +118,13 @@ function ProductListServerDemo({ location, history }) {
       </Card>
 
       {/* 상품 상세 정보 Drawer */}
-      {drawerProduct && (
-        <Drawer
-          title={`상품 상세 정보 - ${drawerProduct.name}`}
-          placement="right"
-          onClose={handleCloseDrawer}
-          visible={drawerVisible}
-          width={400}
-        >
-          <div>
-            <div style={{ marginBottom: '16px' }}>
-              <strong>상품 ID:</strong>
-              <Tag style={{ marginLeft: '8px' }}>{drawerProduct.id}</Tag>
-            </div>
-            <Divider />
-
-            <div style={{ marginBottom: '16px' }}>
-              <strong>상품명:</strong>
-              <Tag style={{ marginLeft: '8px' }}>{drawerProduct.name}</Tag>
-            </div>
-            <Divider />
-
-            <div style={{ marginBottom: '16px' }}>
-              <strong>설명:</strong>
-              <p style={{ marginLeft: '0px', marginTop: '8px' }}>{drawerProduct.description}</p>
-            </div>
-            <Divider />
-
-            <div style={{ marginBottom: '16px' }}>
-              <strong>가격:</strong>
-              <Tag color="blue" style={{ marginLeft: '8px' }}>
-                ₩{drawerProduct.price.toLocaleString()}
-              </Tag>
-            </div>
-            <Divider />
-
-            <div style={{ marginBottom: '16px' }}>
-              <strong>재고:</strong>
-              <Tag
-                color={drawerProduct.stock < 20 ? 'red' : 'green'}
-                style={{ marginLeft: '8px' }}
-              >
-                {drawerProduct.stock}개
-              </Tag>
-            </div>
-            <Divider />
-
-            <div style={{ marginBottom: '16px' }}>
-              <strong>카테고리:</strong>
-              <Tag style={{ marginLeft: '8px' }}>{drawerProduct.category}</Tag>
-            </div>
-          </div>
-        </Drawer>
-      )}
+      <ServerProductDetailDrawer
+        product={drawerProduct}
+        visible={drawerVisible}
+        onClose={handleCloseDrawer}
+      />
     </div>
   );
 }
 
-export default withRouter(ProductListServerDemo);
+export default withRouter(ProductServerApp);
