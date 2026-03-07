@@ -16,7 +16,7 @@ const sampleProducts = [
 
 // 환경변수로 Mock API 사용 여부 결정 (기본값: true)
 // 명시적으로 'true' 문자열일 때만 Mock API 사용
-const USE_MOCK_API = process.env.REACT_APP_USE_MOCK_API === 'true';
+const USE_MOCK_API = process.env.REACT_APP_USE_MOCK_API !== 'false';
 
 /**
  * 상품 목록 조회 API
