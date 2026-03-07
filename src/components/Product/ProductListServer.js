@@ -7,7 +7,7 @@
  * - 페이지 변경 시 서버 요청 발생
  *
  * 사용법:
- * import ProductListServer from '@/components/ProductListServer';
+ * import ProductListServer from '@/components/Product/ProductListServer';
  * <ProductListServer onOpenDrawer={handleOpenDrawer} />
  */
 
