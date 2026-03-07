@@ -7,6 +7,7 @@ import Stepper from '@/pages/Stepper';
 import ProductsApp from '@/pages/ProductsApp';
 import ProductServerApp from '@/pages/ProductServerApp';
 import ResourceTransfer from '@/pages/ResourceTransfer';
+import ServiceRegistration from '@/pages/ServiceRegistration';
 import { AboutProvider } from './context/AboutContext';
 import './App.css';
 
@@ -26,6 +27,7 @@ function App() {
               <Link to="/products" style={{ color: 'white', textDecoration: 'none' }}>Products (CSR)</Link>
               <Link to="/products-server" style={{ color: 'white', textDecoration: 'none' }}>Products (SSR)</Link>
               <Link to="/resource-transfer" style={{ color: 'white', textDecoration: 'none' }}>자원 이관</Link>
+              <Link to="/service-registration" style={{ color: 'white', textDecoration: 'none' }}>서버 등록</Link>
             </div>
           </Header>
           <Content style={{ padding: '20px' }}>
@@ -36,6 +38,7 @@ function App() {
               <Route exact path="/products" component={ProductsApp} />
               <Route exact path="/products-server" component={ProductServerApp} />
               <Route exact path="/resource-transfer" component={ResourceTransfer} />
+              <Route exact path="/service-registration" component={ServiceRegistration} />
             </Switch>
           </Content>
           <Footer style={{ textAlign: 'center' }}>
