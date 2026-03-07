@@ -6,6 +6,7 @@ import About from '@/pages/About';
 import Stepper from '@/pages/Stepper';
 import ProductsApp from '@/pages/ProductsApp';
 import ProductServerApp from '@/pages/ProductServerApp';
+import ResourceTransfer from '@/pages/ResourceTransfer';
 import { AboutProvider } from './context/AboutContext';
 import './App.css';
 
@@ -24,6 +25,7 @@ function App() {
               <Link to="/stepper" style={{ color: 'white', textDecoration: 'none' }}>Stepper</Link>
               <Link to="/products" style={{ color: 'white', textDecoration: 'none' }}>Products (CSR)</Link>
               <Link to="/products-server" style={{ color: 'white', textDecoration: 'none' }}>Products (SSR)</Link>
+              <Link to="/resource-transfer" style={{ color: 'white', textDecoration: 'none' }}>자원 이관</Link>
             </div>
           </Header>
           <Content style={{ padding: '20px' }}>
@@ -33,6 +35,7 @@ function App() {
               <Route exact path="/stepper" component={Stepper} />
               <Route exact path="/products" component={ProductsApp} />
               <Route exact path="/products-server" component={ProductServerApp} />
+              <Route exact path="/resource-transfer" component={ResourceTransfer} />
             </Switch>
           </Content>
           <Footer style={{ textAlign: 'center' }}>
