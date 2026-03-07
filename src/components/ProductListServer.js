@@ -12,6 +12,7 @@
  */
 
 import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
+import { useProductServerStore } from '@/stores/productServerStore';
 import { Button, Spin } from 'antd';
 import { AgGridReact } from 'ag-grid-react';
 import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community';
@@ -26,6 +27,7 @@ ModuleRegistry.registerModules([AllCommunityModule]);
  * @param {Function} props.onOpenDrawer - drawer 열기 핸들러
  */
 function ProductListServer({ onOpenDrawer }) {
+  const refreshKey = useProductServerStore((state) => state.refreshKey);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [totalRows, setTotalRows] = useState(0);
@@ -138,6 +140,15 @@ function ProductListServer({ onOpenDrawer }) {
   useEffect(() => {
     loadPage(1);
   }, []);
+
+  // refreshKey 변경 시 현재 페이지 재로드
+  useEffect(() => {
+    if (refreshKey > 0) {
+      const page = currentPageRef.current;
+      currentPageRef.current = 0; // 같은 페이지 스킵 방지
+      loadPage(page);
+    }
+  }, [refreshKey]);
 
   const onGridReady = useCallback((params) => {
     // Grid ready handler

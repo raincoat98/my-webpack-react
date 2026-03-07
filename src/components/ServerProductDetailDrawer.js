@@ -1,5 +1,7 @@
 import React from 'react';
-import { Drawer, Divider, Tag } from 'antd';
+import { Drawer, Divider, Tag, Button } from 'antd';
+import { ReloadOutline } from '@ant-design/icons';
+import { useProductServerStore } from '@/stores/productServerStore';
 
 /**
  * 서버 사이드 렌더링용 상품 상세 정보 Drawer
@@ -9,6 +11,7 @@ import { Drawer, Divider, Tag } from 'antd';
  * @param {Function} props.onClose - Drawer 닫기 핸들러
  */
 function ServerProductDetailDrawer({ product, visible, onClose }) {
+  const refresh = useProductServerStore((state) => state.refresh);
   if (!product) {
     return null;
   }
@@ -20,6 +23,15 @@ function ServerProductDetailDrawer({ product, visible, onClose }) {
       onClose={onClose}
       visible={visible}
       width={400}
+      extra={
+        <Button
+          icon={<ReloadOutline />}
+          onClick={refresh}
+          title="목록 새로 고침"
+        >
+          새로 고침
+        </Button>
+      }
     >
       <div>
         <div style={{ marginBottom: '16px' }}>
