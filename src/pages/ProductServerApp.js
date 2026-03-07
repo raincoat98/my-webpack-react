@@ -11,8 +11,8 @@
 import React, { useState, useEffect } from 'react';
 import { Card } from 'antd';
 import { withRouter } from 'react-router-dom';
-import ProductListServer from '@/components/ProductListServer';
-import ServerProductDetailDrawer from '@/components/ServerProductDetailDrawer';
+import ProductListServer from '@/components/Product/ProductListServer';
+import ServerProductDetailDrawer from '@/components/Product/ServerProductDetailDrawer';
 
 function ProductServerApp({ location, history }) {
   const [drawerVisible, setDrawerVisible] = useState(false);

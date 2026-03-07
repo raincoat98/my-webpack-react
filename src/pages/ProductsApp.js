@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Card } from 'antd';
 import { withRouter } from 'react-router-dom';
-import ProductList from '@/components/ProductList';
-import ProductDetailDrawer from '@/components/ProductDetailDrawer';
+import ProductList from '@/components/Product/ProductList';
+import ProductDetailDrawer from '@/components/Product/ProductDetailDrawer';
 
 function ProductsApp({ location, history }) {
   const [drawerVisible, setDrawerVisible] = useState(false);

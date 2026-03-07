@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Steps, Button, Card, message } from 'antd';
-import Step1AccountSelection from './ResourceTransfer/Step1AccountSelection';
-import Step2TransferAccount from './ResourceTransfer/Step2TransferAccount';
-import Step3Confirm from './ResourceTransfer/Step3Confirm';
-import Step4Complete from './ResourceTransfer/Step3Complete';
-import { TARGET_ACCOUNTS } from './ResourceTransfer/mockData';
+import Step1AccountSelection from '@/components/ResourceTransfer/Step1AccountSelection';
+import Step2TransferAccount from '@/components/ResourceTransfer/Step2TransferAccount';
+import Step3Confirm from '@/components/ResourceTransfer/Step3Confirm';
+import Step4Complete from '@/components/ResourceTransfer/Step3Complete';
+import { TARGET_ACCOUNTS } from '@/components/ResourceTransfer/mockData';
 
 const { Step } = Steps;
 

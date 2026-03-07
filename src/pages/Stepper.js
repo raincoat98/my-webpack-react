@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Steps, Button, Card, message } from 'antd';
-import Step1ProductSelection from './Stepper/Step1ProductSelection';
-import Step2AccountInfo from './Stepper/Step2AccountInfo';
-import Step3Completion from './Stepper/Step3Completion';
-import { validateStep1, validateStep2 } from './Stepper/validators';
+import Step1ProductSelection from '@/components/Stepper/Step1ProductSelection';
+import Step2AccountInfo from '@/components/Stepper/Step2AccountInfo';
+import Step3Completion from '@/components/Stepper/Step3Completion';
+import { validateStep1, validateStep2 } from '@/components/Stepper/validators';
 
 const { Step } = Steps;
 
