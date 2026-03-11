@@ -1,64 +1,76 @@
 import React from 'react';
-import { Form, Select, InputNumber } from 'antd';
+import { Form, Input, InputNumber, Select } from 'antd';
 
 const { Option } = Select;
 
-const PRODUCTS = [
-  { id: 1, name: 'Product A', price: 10000 },
-  { id: 2, name: 'Product B', price: 20000 },
-  { id: 3, name: 'Product C', price: 30000 },
-];
+const CATEGORIES = ['카테고리 1', '카테고리 2', '카테고리 3'];
 
 function Step1ProductSelection({ formData, errors, onFieldChange }) {
-  const selectedProduct = PRODUCTS.find(p => p.id === formData.product);
-
   return (
     <div>
-      <h3>상품 선택</h3>
+      <h3>상품 정보 입력</h3>
       <Form layout="vertical" style={{ marginBottom: '20px' }}>
         <Form.Item
-          label="상품 선택"
-          validateStatus={errors.product ? 'error' : ''}
-          help={errors.product}
+          label="상품명"
+          validateStatus={errors.name ? 'error' : ''}
+          help={errors.name}
         >
+          <Input
+            placeholder="상품명을 입력하세요"
+            value={formData.name}
+            onChange={(e) => onFieldChange('name', e.target.value)}
+          />
+        </Form.Item>
+
+        <Form.Item
+          label="가격"
+          validateStatus={errors.price ? 'error' : ''}
+          help={errors.price}
+        >
+          <InputNumber
+            min={0}
+            style={{ width: '100%' }}
+            placeholder="가격을 입력하세요"
+            value={formData.price}
+            formatter={(v) => v ? `₩${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ''}
+            parser={(v) => v.replace(/₩|,/g, '')}
+            onChange={(value) => onFieldChange('price', value)}
+          />
+        </Form.Item>
+
+        <Form.Item
+          label="재고"
+          validateStatus={errors.stock ? 'error' : ''}
+          help={errors.stock}
+        >
+          <InputNumber
+            min={0}
+            style={{ width: '100%' }}
+            placeholder="재고 수량을 입력하세요"
+            value={formData.stock}
+            onChange={(value) => onFieldChange('stock', value)}
+          />
+        </Form.Item>
+
+        <Form.Item label="카테고리">
           <Select
-            placeholder="상품을 선택하세요"
-            value={formData.product}
-            onChange={(value) => onFieldChange('product', value)}
+            placeholder="카테고리를 선택하세요"
+            value={formData.category}
+            onChange={(value) => onFieldChange('category', value)}
           >
-            {PRODUCTS.map(product => (
-              <Option key={product.id} value={product.id}>
-                {product.name} - ₩{product.price.toLocaleString()}
-              </Option>
+            {CATEGORIES.map((c) => (
+              <Option key={c} value={c}>{c}</Option>
             ))}
           </Select>
         </Form.Item>
 
-        <Form.Item
-          label="수량"
-          validateStatus={errors.quantity ? 'error' : ''}
-          help={errors.quantity}
-        >
-          <InputNumber
-            min={1}
-            value={formData.quantity}
-            onChange={(value) => onFieldChange('quantity', value)}
-            style={{ width: '100%' }}
+        <Form.Item label="설명">
+          <Input
+            placeholder="상품 설명을 입력하세요"
+            value={formData.description}
+            onChange={(e) => onFieldChange('description', e.target.value)}
           />
         </Form.Item>
-
-        {selectedProduct && (
-          <div style={{
-            background: '#f0f2f5',
-            padding: '15px',
-            borderRadius: '4px',
-            marginTop: '15px'
-          }}>
-            <p><strong>선택된 상품:</strong> {selectedProduct.name}</p>
-            <p><strong>수량:</strong> {formData.quantity}</p>
-            <p><strong>총액:</strong> ₩{(selectedProduct.price * formData.quantity).toLocaleString()}</p>
-          </div>
-        )}
       </Form>
     </div>
   );

@@ -1,62 +1,27 @@
 import React from 'react';
-import { Form, Input } from 'antd';
 
-function Step2AccountInfo({ formData, errors, onFieldChange, selectedProduct }) {
+function Step2AccountInfo({ formData }) {
   return (
     <div>
-      <h3>계정 정보</h3>
-      <Form layout="vertical" style={{ marginBottom: '20px' }}>
-        <Form.Item
-          label="이름"
-          validateStatus={errors.name ? 'error' : ''}
-          help={errors.name}
-        >
-          <Input
-            placeholder="이름을 입력하세요"
-            value={formData.name}
-            onChange={(e) => onFieldChange('name', e.target.value)}
-          />
-        </Form.Item>
-
-        <Form.Item
-          label="이메일"
-          validateStatus={errors.email ? 'error' : ''}
-          help={errors.email}
-        >
-          <Input
-            type="email"
-            placeholder="이메일을 입력하세요"
-            value={formData.email}
-            onChange={(e) => onFieldChange('email', e.target.value)}
-          />
-        </Form.Item>
-
-        <Form.Item
-          label="휴대폰"
-          validateStatus={errors.phone ? 'error' : ''}
-          help={errors.phone}
-        >
-          <Input
-            placeholder="휴대폰 번호를 입력하세요 (숫자만)"
-            value={formData.phone}
-            onChange={(e) => onFieldChange('phone', e.target.value.replace(/\D/g, ''))}
-          />
-        </Form.Item>
-
-        {selectedProduct && (
-          <div style={{
-            background: '#f0f2f5',
-            padding: '15px',
-            borderRadius: '4px',
-            marginTop: '15px'
-          }}>
-            <p><strong>주문 요약:</strong></p>
-            <p>상품: {selectedProduct.name}</p>
-            <p>수량: {formData.quantity}</p>
-            <p>총액: ₩{(selectedProduct.price * formData.quantity).toLocaleString()}</p>
-          </div>
-        )}
-      </Form>
+      <h3>입력 내용 확인</h3>
+      <div style={{ background: '#f0f2f5', padding: '20px', borderRadius: '4px' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <tbody>
+            {[
+              ['상품명', formData.name],
+              ['가격', formData.price != null ? `₩${Number(formData.price).toLocaleString()}` : '-'],
+              ['재고', formData.stock != null ? `${formData.stock}개` : '-'],
+              ['카테고리', formData.category || '-'],
+              ['설명', formData.description || '-'],
+            ].map(([label, value]) => (
+              <tr key={label} style={{ borderBottom: '1px solid #e8e8e8' }}>
+                <td style={{ padding: '10px', fontWeight: 'bold', width: '100px', color: '#666' }}>{label}</td>
+                <td style={{ padding: '10px' }}>{value}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
