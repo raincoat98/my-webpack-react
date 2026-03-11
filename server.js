@@ -1,111 +1,82 @@
 const express = require('express');
 const cors = require('cors');
+const fs = require('fs');
+const path = require('path');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3001;
+const DB_PATH = path.join(__dirname, 'data/products.json');
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
 // Request logging
-app.use((req, res, next) => {
+app.use((req, _res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
   next();
 });
 
-// In-memory product data
-let products = [
-  { id: 1, name: 'Product A', price: 10000, description: '고급 상품 A', stock: 50, category: '카테고리 1' },
-  { id: 2, name: 'Product B', price: 20000, description: '프리미엄 상품 B', stock: 30, category: '카테고리 2' },
-  { id: 3, name: 'Product C', price: 30000, description: '최고급 상품 C', stock: 15, category: '카테고리 1' },
-  { id: 4, name: 'Product D', price: 15000, description: '스탠다드 상품 D', stock: 45, category: '카테고리 3' },
-  { id: 5, name: 'Product E', price: 25000, description: '프리미엄 상품 E', stock: 20, category: '카테고리 2' },
-];
+// 파일에서 읽기 / 쓰기
+function loadProducts() {
+  return JSON.parse(fs.readFileSync(DB_PATH, 'utf-8'));
+}
+
+function saveProducts(products) {
+  fs.writeFileSync(DB_PATH, JSON.stringify(products, null, 2), 'utf-8');
+}
 
 /**
  * GET /api/products
- * 상품 목록 조회 (서버 사이드 페이지네이션)
- * Query parameters:
- *   - startRow: 시작 행 인덱스 (0부터)
- *   - endRow: 종료 행 인덱스 (exclusive)
- *   - category: 카테고리 필터
- *   - sortBy: 정렬 필드 (name, price, stock)
- *   - order: 정렬 순서 (asc, desc)
  */
 app.get('/api/products', (req, res) => {
-  let result = [...products];
+  let result = loadProducts();
 
-  // 카테고리 필터링
   if (req.query.category) {
     result = result.filter(p => p.category === req.query.category);
   }
 
-  // 정렬
   if (req.query.sortBy) {
     const sortBy = req.query.sortBy;
     const order = req.query.order === 'desc' ? -1 : 1;
-
     result.sort((a, b) => {
-      if (typeof a[sortBy] === 'string') {
-        return a[sortBy].localeCompare(b[sortBy]) * order;
-      }
+      if (typeof a[sortBy] === 'string') return a[sortBy].localeCompare(b[sortBy]) * order;
       return (a[sortBy] - b[sortBy]) * order;
     });
   }
 
-  // 전체 개수 저장 (페이지네이션 전)
   const rowCount = result.length;
-
-  // 페이지네이션
   const startRow = parseInt(req.query.startRow, 10) || 0;
   const endRow = parseInt(req.query.endRow, 10) || result.length;
 
-  const paginatedResult = result.slice(startRow, endRow);
-
-  res.json({
-    success: true,
-    data: paginatedResult,
-    rowCount: rowCount,
-  });
+  res.json({ success: true, data: result.slice(startRow, endRow), rowCount });
 });
 
 /**
  * GET /api/products/:id
- * 상품 상세 조회
  */
 app.get('/api/products/:id', (req, res) => {
-  const productId = parseInt(req.params.id, 10);
-  const product = products.find(p => p.id === productId);
+  const products = loadProducts();
+  const product = products.find(p => p.id === parseInt(req.params.id, 10));
 
   if (!product) {
-    return res.status(404).json({
-      success: false,
-      message: '상품을 찾을 수 없습니다.',
-    });
+    return res.status(404).json({ success: false, message: '상품을 찾을 수 없습니다.' });
   }
 
-  res.json({
-    success: true,
-    data: product,
-  });
+  res.json({ success: true, data: product });
 });
 
 /**
  * POST /api/products
- * 상품 생성
  */
 app.post('/api/products', (req, res) => {
   const { name, price, description, stock, category } = req.body;
 
-  // 유효성 검사
   if (!name || price === undefined || stock === undefined) {
-    return res.status(400).json({
-      success: false,
-      message: '필수 필드가 누락되었습니다.',
-    });
+    return res.status(400).json({ success: false, message: '필수 필드가 누락되었습니다.' });
   }
 
+  const products = loadProducts();
   const newProduct = {
     id: Math.max(...products.map(p => p.id), 0) + 1,
     name,
@@ -116,63 +87,45 @@ app.post('/api/products', (req, res) => {
   };
 
   products.push(newProduct);
+  saveProducts(products);
 
-  res.status(201).json({
-    success: true,
-    data: newProduct,
-  });
+  res.status(201).json({ success: true, data: newProduct });
 });
 
 /**
  * PUT /api/products/:id
- * 상품 수정
  */
 app.put('/api/products/:id', (req, res) => {
+  const products = loadProducts();
   const productId = parseInt(req.params.id, 10);
-  const productIndex = products.findIndex(p => p.id === productId);
+  const idx = products.findIndex(p => p.id === productId);
 
-  if (productIndex === -1) {
-    return res.status(404).json({
-      success: false,
-      message: '상품을 찾을 수 없습니다.',
-    });
+  if (idx === -1) {
+    return res.status(404).json({ success: false, message: '상품을 찾을 수 없습니다.' });
   }
 
-  const updatedProduct = {
-    ...products[productIndex],
-    ...req.body,
-    id: productId, // ID는 변경 불가
-  };
+  products[idx] = { ...products[idx], ...req.body, id: productId };
+  saveProducts(products);
 
-  products[productIndex] = updatedProduct;
-
-  res.json({
-    success: true,
-    data: updatedProduct,
-  });
+  res.json({ success: true, data: products[idx] });
 });
 
 /**
  * DELETE /api/products/:id
- * 상품 삭제
  */
 app.delete('/api/products/:id', (req, res) => {
+  const products = loadProducts();
   const productId = parseInt(req.params.id, 10);
-  const productIndex = products.findIndex(p => p.id === productId);
+  const idx = products.findIndex(p => p.id === productId);
 
-  if (productIndex === -1) {
-    return res.status(404).json({
-      success: false,
-      message: '상품을 찾을 수 없습니다.',
-    });
+  if (idx === -1) {
+    return res.status(404).json({ success: false, message: '상품을 찾을 수 없습니다.' });
   }
 
-  const deletedProduct = products.splice(productIndex, 1)[0];
+  const deleted = products.splice(idx, 1)[0];
+  saveProducts(products);
 
-  res.json({
-    success: true,
-    data: deletedProduct,
-  });
+  res.json({ success: true, data: deleted });
 });
 
 // Start server
