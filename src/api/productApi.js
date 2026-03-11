@@ -1,9 +1,5 @@
 // API 기본 설정
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
-console.log('=== API Configuration ===');
-console.log('API_BASE_URL:', API_BASE_URL);
-console.log('REACT_APP_USE_MOCK_API:', process.env.REACT_APP_USE_MOCK_API);
-console.log('USE_MOCK_API:', process.env.REACT_APP_USE_MOCK_API !== 'false');
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
 
 // 샘플 상품 데이터 (모의 데이터용)
 const sampleProducts = [
@@ -16,7 +12,7 @@ const sampleProducts = [
 
 // 환경변수로 Mock API 사용 여부 결정 (기본값: true)
 // 명시적으로 'true' 문자열일 때만 Mock API 사용
-const USE_MOCK_API = process.env.REACT_APP_USE_MOCK_API !== 'false';
+const USE_MOCK_API = !!process.env.REACT_APP_USE_MOCK_API;
 
 /**
  * 상품 목록 조회 API
