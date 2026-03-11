@@ -11,7 +11,7 @@
  * <ProductListServer onOpenDrawer={handleOpenDrawer} />
  */
 
-import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useProductServerStore } from '@/stores/productServerStore';
 import { Button, Spin } from 'antd';
 import { AgGridReact } from 'ag-grid-react';
@@ -30,9 +30,7 @@ function ProductListServer({ onOpenDrawer }) {
   const refreshKey = useProductServerStore((state) => state.refreshKey);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [totalRows, setTotalRows] = useState(0);
   const pageSize = 5;
-  const currentPageRef = useRef(0);
 
   const handleOpenDrawer = useCallback((product) => {
     console.log('ServerComponent Drawer opened for:', product);
@@ -108,65 +106,27 @@ function ProductListServer({ onOpenDrawer }) {
     editable: false,
   };
 
-  // 페이지 변경 시 서버에서 데이터 로드
-  const loadPage = useCallback((pageNumber) => {
-    // 같은 페이지 요청이면 무시
-    if (currentPageRef.current === pageNumber) {
-      return;
-    }
-
-    currentPageRef.current = pageNumber;
-    const startRow = (pageNumber - 1) * pageSize;
-    const endRow = startRow + pageSize;
-
+  const fetchAll = useCallback(() => {
     setLoading(true);
-
-    fetch(`http://localhost:3001/api/products?startRow=${startRow}&endRow=${endRow}`)
+    fetch('http://localhost:3001/api/products')
       .then(res => res.json())
       .then(result => {
-        if (result.success) {
-          setProducts(result.data);
-          setTotalRows(result.rowCount);
-        }
+        if (result.success) setProducts(result.data);
         setLoading(false);
       })
       .catch(err => {
         console.error('데이터 로드 실패:', err);
         setLoading(false);
       });
-  }, [pageSize]);
-
-  // 초기 데이터 로드 (마운트 시 1회만)
-  useEffect(() => {
-    loadPage(1);
   }, []);
 
-  // refreshKey 변경 시 현재 페이지 재로드
   useEffect(() => {
-    if (refreshKey > 0) {
-      const page = currentPageRef.current;
-      currentPageRef.current = 0; // 같은 페이지 스킵 방지
-      loadPage(page);
-    }
+    fetchAll();
+  }, []);
+
+  useEffect(() => {
+    if (refreshKey > 0) fetchAll();
   }, [refreshKey]);
-
-  const onGridReady = useCallback((params) => {
-    // Grid ready handler
-  }, []);
-
-  const onRowSelected = () => {
-    // Row selection handler
-  };
-
-  // 페이지 변경 핸들러 - 실제 페이지 변경 시에만 호출
-  const onPaginationChanged = useCallback((params) => {
-    const newPage = params.api.paginationGetCurrentPage() + 1;
-
-    // 페이지가 실제로 변경되었을 때만 서버에서 데이터 로드
-    if (currentPageRef.current !== newPage) {
-      loadPage(newPage);
-    }
-  }, [loadPage]);
 
   return (
     <Spin spinning={loading}>
@@ -176,12 +136,10 @@ function ProductListServer({ onOpenDrawer }) {
             columnDefs={columnDefs}
             rowData={products}
             defaultColDef={defaultColDef}
-            onGridReady={onGridReady}
-            onSelectionChanged={onRowSelected}
-            onPaginationChanged={onPaginationChanged}
             rowSelection="single"
             pagination={true}
             paginationPageSize={pageSize}
+            paginationPageSizeSelector={false}
             domLayout="normal"
           />
         </div>

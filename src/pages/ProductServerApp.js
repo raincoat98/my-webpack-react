@@ -9,12 +9,14 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Card } from 'antd';
+import { Card, Button } from 'antd';
 import { withRouter } from 'react-router-dom';
 import ProductListServer from '@/components/Product/ProductListServer';
 import ServerProductDetailDrawer from '@/components/Product/ServerProductDetailDrawer';
+import { useProductServerStore } from '@/stores/productServerStore';
 
 function ProductServerApp({ location, history }) {
+  const refresh = useProductServerStore((state) => state.refresh);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [drawerProduct, setDrawerProduct] = useState(null);
 
@@ -75,7 +77,13 @@ function ProductServerApp({ location, history }) {
         </p>
       </Card>
 
-      <Card>
+      <Card
+        extra={
+          <Button icon="reload" onClick={refresh}>
+            새로고침
+          </Button>
+        }
+      >
         <ProductListServer
           onOpenDrawer={handleOpenDrawer}
         />
