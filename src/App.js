@@ -9,6 +9,8 @@ import ProductServerApp from '@/pages/ProductServerApp';
 import ResourceTransfer from '@/pages/ResourceTransfer';
 import ServiceRegistration from '@/pages/ServiceRegistration';
 import AgGridEnterprisePage from '@/pages/AgGridEnterprisePage';
+import AgGridColumnSizePage from '@/pages/AgGridColumnSizePage';
+import RightDock from '@/components/RightDock/RightDock';
 import { AboutProvider } from './context/AboutContext';
 import './App.css';
 
@@ -30,20 +32,25 @@ function App() {
               <Link to="/resource-transfer" style={{ color: 'white', textDecoration: 'none' }}>자원 이관</Link>
               <Link to="/service-registration" style={{ color: 'white', textDecoration: 'none' }}>서버 등록</Link>
               <Link to="/aggrid-enterprise" style={{ color: 'white', textDecoration: 'none' }}>Enterprise</Link>
+              <Link to="/aggrid-column-size" style={{ color: 'white', textDecoration: 'none' }}>컬럼 너비 전략</Link>
             </div>
           </Header>
-          <Content style={{ padding: '20px' }}>
-            <Switch>
-              <Route exact path="/" component={Home} />
-              <Route exact path="/about" component={About} />
-              <Route exact path="/stepper" component={Stepper} />
-              <Route exact path="/products" component={ProductsApp} />
-              <Route exact path="/products-server" component={ProductServerApp} />
-              <Route exact path="/resource-transfer" component={ResourceTransfer} />
-              <Route exact path="/service-registration" component={ServiceRegistration} />
-              <Route exact path="/aggrid-enterprise" component={AgGridEnterprisePage} />
-            </Switch>
-          </Content>
+          <Layout style={{ display: 'flex', flexDirection: 'row', flex: 1 }}>
+            <Content style={{ padding: '20px' }}>
+              <Switch>
+                <Route exact path="/" component={Home} />
+                <Route exact path="/about" component={About} />
+                <Route exact path="/stepper" component={Stepper} />
+                <Route exact path="/products" component={ProductsApp} />
+                <Route exact path="/products-server" component={ProductServerApp} />
+                <Route exact path="/resource-transfer" component={ResourceTransfer} />
+                <Route exact path="/service-registration" component={ServiceRegistration} />
+                <Route exact path="/aggrid-enterprise" component={AgGridEnterprisePage} />
+                <Route exact path="/aggrid-column-size" component={AgGridColumnSizePage} />
+              </Switch>
+            </Content>
+            <RightDock />
+          </Layout>
           <Footer style={{ textAlign: 'center' }}>
             My Webpack React App ©2024
           </Footer>
