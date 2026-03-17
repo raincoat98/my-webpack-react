@@ -9,7 +9,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Card, Button } from 'antd';
+import { Card, Button, Modal, Descriptions, Tag, Switch, message, Typography } from 'antd';
 import { withRouter } from 'react-router-dom';
 import ProductListServer from '@/components/Product/ProductListServer';
 import ServerProductDetailDrawer from '@/components/Product/ServerProductDetailDrawer';
@@ -19,6 +19,8 @@ function ProductServerApp({ location, history }) {
   const refresh = useProductServerStore((state) => state.refresh);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [drawerProduct, setDrawerProduct] = useState(null);
+  const [actionModalVisible, setActionModalVisible] = useState(false);
+  const [actionProduct, setActionProduct] = useState(null);
 
   // URL 쿼리 파라미터에서 drawer 상태 초기화
   useEffect(() => {
@@ -51,6 +53,50 @@ function ProductServerApp({ location, history }) {
     params.set('id', product.id);
     params.set('detail', 'true');
     history.push(`${location.pathname}?${params.toString()}`);
+  };
+
+  const handleOpenActionModal = (product) => {
+    setActionProduct({ ...product });
+    setActionModalVisible(true);
+  };
+
+  const handleCloseActionModal = () => {
+    setActionModalVisible(false);
+    setTimeout(() => setActionProduct(null), 300);
+  };
+
+  const handleStatusToggle = (checked) => {
+    const nextLabel = checked ? '활성' : '비활성';
+    Modal.confirm({
+      title: '상태 변경',
+      content: (
+        <Typography.Text>
+          <strong>{actionProduct.name}</strong> 상품을{' '}
+          <Typography.Text type={checked ? 'success' : 'secondary'}>
+            {nextLabel}
+          </Typography.Text>
+          으로 변경하시겠습니까?
+        </Typography.Text>
+      ),
+      okText: '변경',
+      cancelText: '취소',
+      onOk: () => {
+        fetch(`http://localhost:3001/api/products/${actionProduct.id}/status`, {
+          method: 'PATCH',
+        })
+          .then((res) => res.json())
+          .then((result) => {
+            if (result.success) {
+              message.success(`상태가 ${result.data.active ? '활성' : '비활성'}으로 변경되었습니다.`);
+              setActionProduct(result.data);
+              refresh();
+            } else {
+              message.error('상태 변경에 실패했습니다.');
+            }
+          })
+          .catch(() => message.error('서버 오류가 발생했습니다.'));
+      },
+    });
   };
 
   const handleCloseDrawer = () => {
@@ -86,6 +132,7 @@ function ProductServerApp({ location, history }) {
       >
         <ProductListServer
           onOpenDrawer={handleOpenDrawer}
+          onOpenAction={handleOpenActionModal}
         />
       </Card>
 
@@ -95,6 +142,41 @@ function ProductServerApp({ location, history }) {
         visible={drawerVisible}
         onClose={handleCloseDrawer}
       />
+
+      {/* 액션 팝업 Modal */}
+      <Modal
+        title={actionProduct ? `상태 변경: ${actionProduct.name}` : '상태 변경'}
+        visible={actionModalVisible}
+        onCancel={handleCloseActionModal}
+        footer={[
+          <Button key="cancel" onClick={handleCloseActionModal}>
+            닫기
+          </Button>,
+        ]}
+      >
+        {actionProduct && (
+          <Descriptions column={1} bordered size="small">
+            <Descriptions.Item label="상품명">{actionProduct.name}</Descriptions.Item>
+            <Descriptions.Item label="카테고리">
+              <Tag color="blue">{actionProduct.category}</Tag>
+            </Descriptions.Item>
+            <Descriptions.Item label="가격">₩{actionProduct.price?.toLocaleString()}</Descriptions.Item>
+            <Descriptions.Item label="재고">
+              <Tag color={actionProduct.stock < 20 ? 'red' : 'green'}>
+                {actionProduct.stock}개
+              </Tag>
+            </Descriptions.Item>
+            <Descriptions.Item label="현재 상태">
+              <Switch
+                checked={actionProduct.active ?? true}
+                onChange={handleStatusToggle}
+                checkedChildren="활성"
+                unCheckedChildren="비활성"
+              />
+            </Descriptions.Item>
+          </Descriptions>
+        )}
+      </Modal>
     </div>
   );
 }

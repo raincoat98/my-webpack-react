@@ -13,20 +13,17 @@
 
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useProductServerStore } from '@/stores/productServerStore';
-import { Button, Spin } from 'antd';
+import { Button, Spin, Tag } from 'antd';
 import { AgGridReact } from 'ag-grid-react';
-import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-balham.css';
-
-ModuleRegistry.registerModules([AllCommunityModule]);
 
 /**
  * 서버에서 데이터를 페이지 단위로 받아 표시하는 상품 목록 컴포넌트
  * @param {Object} props - 컴포넌트 props
  * @param {Function} props.onOpenDrawer - drawer 열기 핸들러
  */
-function ProductListServer({ onOpenDrawer }) {
+function ProductListServer({ onOpenDrawer, onOpenAction }) {
   const refreshKey = useProductServerStore((state) => state.refreshKey);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -36,6 +33,10 @@ function ProductListServer({ onOpenDrawer }) {
     console.log('ServerComponent Drawer opened for:', product);
     onOpenDrawer && onOpenDrawer(product);
   }, [onOpenDrawer]);
+
+  const handleOpenAction = useCallback((product) => {
+    onOpenAction && onOpenAction(product);
+  }, [onOpenAction]);
 
   const columnDefs = useMemo(() => [
     {
@@ -55,6 +56,26 @@ function ProductListServer({ onOpenDrawer }) {
           }}
         >
           상세보기
+        </Button>
+      ),
+    },
+    {
+      field: 'id',
+      headerName: '액션',
+      width: 90,
+      sortable: false,
+      filter: false,
+      suppressRowClickSelection: true,
+      cellRenderer: (params) => (
+        <Button
+          type="primary"
+          size="small"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleOpenAction(params.data);
+          }}
+        >
+          액션
         </Button>
       ),
     },
@@ -99,11 +120,24 @@ function ProductListServer({ onOpenDrawer }) {
       sortable: true,
       filter: true,
     },
-  ], [handleOpenDrawer]);
+    {
+      field: 'active',
+      headerName: '상태',
+      width: 90,
+      sortable: true,
+      filter: false,
+      cellRenderer: (params) => (
+        <Tag color={params.value ? 'green' : 'red'}>
+          {params.value ? '활성' : '비활성'}
+        </Tag>
+      ),
+    },
+  ], [handleOpenDrawer, handleOpenAction]);
 
   const defaultColDef = {
     resizable: true,
     editable: false,
+    cellStyle: { display: 'flex', alignItems: 'center' },
   };
 
   const fetchAll = useCallback(() => {
@@ -141,6 +175,7 @@ function ProductListServer({ onOpenDrawer }) {
             paginationPageSize={pageSize}
             paginationPageSizeSelector={false}
             domLayout="normal"
+            rowHeight={40}
           />
         </div>
       </div>
