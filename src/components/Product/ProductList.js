@@ -1,12 +1,9 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Button } from 'antd';
 import { AgGridReact } from 'ag-grid-react';
-import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community';
 import { fetchProducts } from '@/api/productApi';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-balham.css';
-
-ModuleRegistry.registerModules([AllCommunityModule]);
 
 function ProductList({ onOpenDrawer, onProductsLoaded, currentPage = 1, selectedProductId = null }) {
   const [products, setProducts] = useState([]);

@@ -1,12 +1,9 @@
 import React, { useMemo, useCallback, useRef } from 'react';
 import { AgGridReact } from 'ag-grid-react';
-import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-balham.css';
 import { Tag, Icon, Button } from 'antd';
 import { AVAILABLE_SERVERS, TYPE_COLORS } from './mockData';
-
-ModuleRegistry.registerModules([AllCommunityModule]);
 
 const STATUS_CONFIG = {
   available: { color: '#52c41a', label: '사용 가능' },
