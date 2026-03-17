@@ -11,8 +11,9 @@
     "server:dev": "nodemon server.js"
   },
   "dependencies": {
-    "ag-grid-community": "^35.0.1",
-    "ag-grid-react": "^35.0.1",
+    "ag-grid-community": "32.2.1",
+    "ag-grid-enterprise": "32.2.1",
+    "ag-grid-react": "32.2.1",
     "antd": "^3.26.20",
     "axios": "^1.13.5",
     "cors": "^2.8.6",
