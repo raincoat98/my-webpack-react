@@ -111,6 +111,24 @@ app.put('/api/products/:id', (req, res) => {
 });
 
 /**
+ * PATCH /api/products/:id/status
+ */
+app.patch('/api/products/:id/status', (req, res) => {
+  const products = loadProducts();
+  const productId = parseInt(req.params.id, 10);
+  const idx = products.findIndex(p => p.id === productId);
+
+  if (idx === -1) {
+    return res.status(404).json({ success: false, message: '상품을 찾을 수 없습니다.' });
+  }
+
+  products[idx].active = !products[idx].active;
+  saveProducts(products);
+
+  res.json({ success: true, data: products[idx] });
+});
+
+/**
  * DELETE /api/products/:id
  */
 app.delete('/api/products/:id', (req, res) => {
