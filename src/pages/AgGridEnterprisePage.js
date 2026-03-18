@@ -3,10 +3,8 @@ import { AgGridReact } from 'ag-grid-react';
 import { Card, Typography } from 'antd';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-balham.css';
-// Enterprise 모듈 로드 (이 페이지는 항상 Enterprise 전용)
-// ag-grid-enterprise 설치 필요: npm install ag-grid-enterprise@32.2.1
 import 'ag-grid-enterprise';
-// 라이센스키는 index.js에서 설정
+// 모듈 등록은 index.js에서 공통으로 처리
 
 const { Title, Text } = Typography;
 
