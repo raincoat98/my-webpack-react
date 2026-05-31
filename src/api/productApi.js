@@ -182,6 +182,75 @@ export const updateProduct = (productId, productData) => {
 };
 
 /**
+ * 상품 이력 조회 API
+ * @param {number} productId - 상품 ID
+ * @returns {Promise<Array>} 이력 데이터 배열
+ */
+export const fetchProductHistory = (productId) => {
+  if (USE_MOCK_API) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const product = sampleProducts.find(p => p.id === productId);
+        if (!product) {
+          reject(new Error('상품을 찾을 수 없습니다.'));
+          return;
+        }
+        resolve([
+          { id: 1, date: '2025-01-15', type: '가격변경', before: product.price * 0.9, after: product.price, user: '관리자' },
+          { id: 2, date: '2025-02-10', type: '재고입고', before: product.stock - 20, after: product.stock, user: '창고담당' },
+          { id: 3, date: '2025-03-05', type: '카테고리변경', before: '미분류', after: product.category, user: '관리자' },
+          { id: 4, date: '2025-04-20', type: '상품명변경', before: `${product.name} (구)`, after: product.name, user: '관리자' },
+        ]);
+      }, 400);
+    });
+  }
+
+  return fetch(`${API_BASE_URL}/products/${productId}/history`)
+    .then((res) => {
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+      return res.json();
+    })
+    .then((result) => {
+      if (result.success) return result.data;
+      throw new Error(result.message || '이력 조회 실패');
+    });
+};
+
+/**
+ * 상품 메모 조회 API
+ * @param {number} productId - 상품 ID
+ * @returns {Promise<Array>} 메모 데이터 배열
+ */
+export const fetchProductMemo = (productId) => {
+  if (USE_MOCK_API) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const product = sampleProducts.find(p => p.id === productId);
+        if (!product) {
+          reject(new Error('상품을 찾을 수 없습니다.'));
+          return;
+        }
+        resolve([
+          { id: 1, content: `${product.name} 신규 등록 완료. 품질 검수 통과.`, createdAt: '2025-01-10 09:00', author: '관리자' },
+          { id: 2, content: '공급업체 변경으로 인한 가격 조정 예정.', createdAt: '2025-03-01 14:30', author: '구매팀' },
+          { id: 3, content: '여름 시즌 프로모션 대상 상품으로 지정.', createdAt: '2025-05-12 11:00', author: '마케팅' },
+        ]);
+      }, 300);
+    });
+  }
+
+  return fetch(`${API_BASE_URL}/products/${productId}/memo`)
+    .then((res) => {
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+      return res.json();
+    })
+    .then((result) => {
+      if (result.success) return result.data;
+      throw new Error(result.message || '메모 조회 실패');
+    });
+};
+
+/**
  * 상품 삭제 API
  * @param {number} productId - 상품 ID
  * @returns {Promise<Object>} 삭제된 상품 데이터

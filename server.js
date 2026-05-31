@@ -129,6 +129,49 @@ app.patch('/api/products/:id/status', (req, res) => {
 });
 
 /**
+ * GET /api/products/:id/history
+ */
+app.get('/api/products/:id/history', (req, res) => {
+  const productId = parseInt(req.params.id, 10);
+  const products = loadProducts();
+  const product = products.find(p => p.id === productId);
+
+  if (!product) {
+    return res.status(404).json({ success: false, message: '상품을 찾을 수 없습니다.' });
+  }
+
+  const history = [
+    { id: 1, date: '2025-01-15', type: '가격변경', before: product.price * 0.9, after: product.price, user: '관리자' },
+    { id: 2, date: '2025-02-10', type: '재고입고', before: product.stock - 20, after: product.stock, user: '창고담당' },
+    { id: 3, date: '2025-03-05', type: '카테고리변경', before: '미분류', after: product.category, user: '관리자' },
+    { id: 4, date: '2025-04-20', type: '상품명변경', before: `${product.name} (구)`, after: product.name, user: '관리자' },
+  ];
+
+  res.json({ success: true, data: history });
+});
+
+/**
+ * GET /api/products/:id/memo
+ */
+app.get('/api/products/:id/memo', (req, res) => {
+  const productId = parseInt(req.params.id, 10);
+  const products = loadProducts();
+  const product = products.find(p => p.id === productId);
+
+  if (!product) {
+    return res.status(404).json({ success: false, message: '상품을 찾을 수 없습니다.' });
+  }
+
+  const memos = [
+    { id: 1, content: `${product.name} 신규 등록 완료. 품질 검수 통과.`, createdAt: '2025-01-10 09:00', author: '관리자' },
+    { id: 2, content: '공급업체 변경으로 인한 가격 조정 예정.', createdAt: '2025-03-01 14:30', author: '구매팀' },
+    { id: 3, content: '여름 시즌 프로모션 대상 상품으로 지정.', createdAt: '2025-05-12 11:00', author: '마케팅' },
+  ];
+
+  res.json({ success: true, data: memos });
+});
+
+/**
  * DELETE /api/products/:id
  */
 app.delete('/api/products/:id', (req, res) => {
