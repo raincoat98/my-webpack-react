@@ -170,7 +170,7 @@ function ProductListServer({ onOpenDrawer, onOpenAction }) {
             columnDefs={columnDefs}
             rowData={products}
             defaultColDef={defaultColDef}
-            rowSelection="single"
+            rowSelection={{ mode: 'singleRow' }}
             pagination={true}
             paginationPageSize={pageSize}
             paginationPageSizeSelector={false}

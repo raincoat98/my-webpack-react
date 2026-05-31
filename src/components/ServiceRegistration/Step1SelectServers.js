@@ -224,7 +224,7 @@ function Step1SelectServers({ selectedRows, onSelectionChange }) {
               rowData={AVAILABLE_SERVERS}
               columnDefs={columnDefs}
               defaultColDef={defaultColDef}
-              rowSelection="multiple"
+              rowSelection={{ mode: 'multiRow' }}
               onGridReady={onGridReady}
               onSelectionChanged={onSelectionChanged}
               pagination={true}
