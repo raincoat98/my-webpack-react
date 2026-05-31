@@ -2,54 +2,48 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
 import { Layout } from 'antd';
 import Home from '@/pages/Home';
-import About from '@/pages/About';
 import Stepper from '@/pages/Stepper';
 import ProductsApp from '@/pages/ProductsApp';
 import ProductServerApp from '@/pages/ProductServerApp';
 import ResourceTransfer from '@/pages/ResourceTransfer';
 import ServiceRegistration from '@/pages/ServiceRegistration';
 import AgGridEnterprisePage from '@/pages/AgGridEnterprisePage';
-import { AboutProvider } from './context/AboutContext';
 import './App.css';
 
 const { Header, Content, Footer } = Layout;
 
 function App() {
   return (
-    <AboutProvider>
-      <Router>
-        <Layout style={{ minHeight: '100vh' }}>
-          <Header style={{ background: '#001529', display: 'flex', alignItems: 'center', gap: '30px' }}>
-            <h1 style={{ color: 'white', margin: 0 }}>My App</h1>
-            <div style={{ display: 'flex', gap: '20px' }}>
-              <Link to="/" style={{ color: 'white', textDecoration: 'none' }}>Home</Link>
-              <Link to="/about" style={{ color: 'white', textDecoration: 'none' }}>About</Link>
-              <Link to="/stepper" style={{ color: 'white', textDecoration: 'none' }}>Stepper</Link>
-              <Link to="/products" style={{ color: 'white', textDecoration: 'none' }}>Products (CSR)</Link>
-              <Link to="/products-server" style={{ color: 'white', textDecoration: 'none' }}>Products (SSR)</Link>
-              <Link to="/resource-transfer" style={{ color: 'white', textDecoration: 'none' }}>자원 이관</Link>
-              <Link to="/service-registration" style={{ color: 'white', textDecoration: 'none' }}>서버 등록</Link>
-              <Link to="/aggrid-enterprise" style={{ color: 'white', textDecoration: 'none' }}>Enterprise</Link>
-            </div>
-          </Header>
-          <Content style={{ padding: '20px' }}>
-            <Switch>
-              <Route exact path="/" component={Home} />
-              <Route exact path="/about" component={About} />
-              <Route exact path="/stepper" component={Stepper} />
-              <Route exact path="/products" component={ProductsApp} />
-              <Route exact path="/products-server" component={ProductServerApp} />
-              <Route exact path="/resource-transfer" component={ResourceTransfer} />
-              <Route exact path="/service-registration" component={ServiceRegistration} />
-              <Route exact path="/aggrid-enterprise" component={AgGridEnterprisePage} />
-            </Switch>
-          </Content>
-          <Footer style={{ textAlign: 'center' }}>
-            My Webpack React App ©2024
-          </Footer>
-        </Layout>
-      </Router>
-    </AboutProvider>
+    <Router>
+      <Layout style={{ minHeight: '100vh' }}>
+        <Header style={{ background: '#001529', display: 'flex', alignItems: 'center', gap: '30px' }}>
+          <h1 style={{ color: 'white', margin: 0 }}>My App</h1>
+          <div style={{ display: 'flex', gap: '20px' }}>
+            <Link to="/" style={{ color: 'white', textDecoration: 'none' }}>Home</Link>
+            <Link to="/stepper" style={{ color: 'white', textDecoration: 'none' }}>Stepper</Link>
+            <Link to="/products" style={{ color: 'white', textDecoration: 'none' }}>Products (CSR)</Link>
+            <Link to="/products-server" style={{ color: 'white', textDecoration: 'none' }}>Products (SSR)</Link>
+            <Link to="/resource-transfer" style={{ color: 'white', textDecoration: 'none' }}>자원 이관</Link>
+            <Link to="/service-registration" style={{ color: 'white', textDecoration: 'none' }}>서버 등록</Link>
+            <Link to="/aggrid-enterprise" style={{ color: 'white', textDecoration: 'none' }}>Enterprise</Link>
+          </div>
+        </Header>
+        <Content style={{ padding: '20px' }}>
+          <Switch>
+            <Route exact path="/" component={Home} />
+            <Route exact path="/stepper" component={Stepper} />
+            <Route exact path="/products" component={ProductsApp} />
+            <Route exact path="/products-server" component={ProductServerApp} />
+            <Route exact path="/resource-transfer" component={ResourceTransfer} />
+            <Route exact path="/service-registration" component={ServiceRegistration} />
+            <Route exact path="/aggrid-enterprise" component={AgGridEnterprisePage} />
+          </Switch>
+        </Content>
+        <Footer style={{ textAlign: 'center' }}>
+          My Webpack React App ©2024
+        </Footer>
+      </Layout>
+    </Router>
   );
 }
 
