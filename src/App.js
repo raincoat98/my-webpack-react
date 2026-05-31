@@ -9,7 +9,6 @@ import ProductServerApp from '@/pages/ProductServerApp';
 import ResourceTransfer from '@/pages/ResourceTransfer';
 import ServiceRegistration from '@/pages/ServiceRegistration';
 import AgGridEnterprisePage from '@/pages/AgGridEnterprisePage';
-import RightDock from '@/components/RightDock/RightDock';
 import { AboutProvider } from './context/AboutContext';
 import './App.css';
 
@@ -33,21 +32,18 @@ function App() {
               <Link to="/aggrid-enterprise" style={{ color: 'white', textDecoration: 'none' }}>Enterprise</Link>
             </div>
           </Header>
-          <Layout style={{ display: 'flex', flexDirection: 'row', flex: 1 }}>
-            <Content style={{ padding: '20px' }}>
-              <Switch>
-                <Route exact path="/" component={Home} />
-                <Route exact path="/about" component={About} />
-                <Route exact path="/stepper" component={Stepper} />
-                <Route exact path="/products" component={ProductsApp} />
-                <Route exact path="/products-server" component={ProductServerApp} />
-                <Route exact path="/resource-transfer" component={ResourceTransfer} />
-                <Route exact path="/service-registration" component={ServiceRegistration} />
-                <Route exact path="/aggrid-enterprise" component={AgGridEnterprisePage} />
-              </Switch>
-            </Content>
-            <RightDock />
-          </Layout>
+          <Content style={{ padding: '20px' }}>
+            <Switch>
+              <Route exact path="/" component={Home} />
+              <Route exact path="/about" component={About} />
+              <Route exact path="/stepper" component={Stepper} />
+              <Route exact path="/products" component={ProductsApp} />
+              <Route exact path="/products-server" component={ProductServerApp} />
+              <Route exact path="/resource-transfer" component={ResourceTransfer} />
+              <Route exact path="/service-registration" component={ServiceRegistration} />
+              <Route exact path="/aggrid-enterprise" component={AgGridEnterprisePage} />
+            </Switch>
+          </Content>
           <Footer style={{ textAlign: 'center' }}>
             My Webpack React App ©2024
           </Footer>
